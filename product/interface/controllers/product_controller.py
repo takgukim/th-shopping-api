@@ -11,8 +11,6 @@ from product.domain.product import Product
 
 router = APIRouter(prefix="/products")
 
-print("잘되고 있음")
-
 @router.get(
     "/", 
     response_model=list[product_schema.ProductResponse], 
