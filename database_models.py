@@ -1,0 +1,1 @@
+import product.infra.db_models.product
