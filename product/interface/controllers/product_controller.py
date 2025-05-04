@@ -1,7 +1,7 @@
 from dependency_injector.wiring import inject, Provide
 from containers import Container
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 
 from  product.schemas import product as product_schema
 
@@ -18,8 +18,15 @@ router = APIRouter(prefix="/products")
     summary="모든 제품 목록 조회",
     description="현재 판매 중인 제품을 조회한다. 삭제는 조회하지 않는다."
 )
-def get_products():
-    pass
+@inject
+def get_products(
+    start_page: int = Query(1, ge = 1, le = 100, description="페이지 시작번호를 지정하세요"),
+    end_page: int = Query(10, ge = 10, le = 10, description="10개 데이터만 조회 가능해요."), 
+    product_service: ProductService = Depends(Provide[Container.product_service])
+):
+    products = product_service.get_products(start_page, end_page)
+    
+    return products
 
 @router.get("/", response_model=product_schema.ProductResponse, tags=["product"])
 def get_product():

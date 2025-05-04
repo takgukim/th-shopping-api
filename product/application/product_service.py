@@ -11,6 +11,13 @@ class ProductService:
     ):
         self.product_repo = product_repo
 
+    def get_products(self, start_page, end_page) -> list[Product]:
+        new_start_page = (start_page - 1) * end_page
+
+        products = self.product_repo.get_users(new_start_page, end_page)
+
+        return products
+
     def create_product(self, code: str, name: str) -> Product:
 
         product: Product = Product(
