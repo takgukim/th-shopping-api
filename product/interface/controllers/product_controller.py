@@ -28,7 +28,13 @@ def get_products(
     
     return products
 
-@router.get("/", response_model=product_schema.ProductResponse, tags=["product"])
+@router.get(
+    "/{product_id}", 
+    response_model=product_schema.ProductResponse, 
+    tags=["product"],
+    summary="특정 제품 목록 조회",
+    description="특정 제품을 조회하며, 판매가 안되는 것은 조회 하지 않는다."
+)
 def get_product():
     pass
 
