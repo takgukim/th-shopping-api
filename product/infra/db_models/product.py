@@ -4,7 +4,7 @@ from database import Base
 
 class Product(Base):
 
-    __tablename__ = "th_product"
+    __tablename__ = "th_products"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     code: Mapped[str] = mapped_column(String(8), nullable=False, index=True) 

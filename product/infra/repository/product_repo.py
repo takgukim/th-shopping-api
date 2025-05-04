@@ -14,7 +14,7 @@ class ProductRepository(IProductRepository):
     def get_users(self, start_page: int, end_page: int) -> list[ProductVO]:
         
         with engine.connect() as conn:
-            query = text("SELECT id, code, name FROM th_product LIMIT :start_page, :end_page")
+            query = text("SELECT id, code, name FROM th_products LIMIT :start_page, :end_page")
 
             result = conn.execute(query, {"start_page" : start_page, "end_page" : end_page}).mappings()
 
