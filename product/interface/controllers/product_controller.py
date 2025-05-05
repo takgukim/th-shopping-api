@@ -3,8 +3,6 @@ from containers import Container
 
 from fastapi import APIRouter, Depends, Query
 
-from  product.schemas import product as product_schema
-
 from product.schemas.product_create import ProductCreate 
 from product.schemas.product_response import ProductResponse
 from product.schemas.product_update import ProductUpdate
@@ -62,7 +60,7 @@ def create_product(
     return new_product
 
 @router.put("/{product_id}", response_model=ProductResponse, tags=["product"])
-def update_product(product_body: product_schema.ProductUpdate):
+def update_product(product_body: ProductUpdate):
     pass
 
 @router.delete("/{product_id}", tags=["product"])
