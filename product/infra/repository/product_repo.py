@@ -38,6 +38,7 @@ class ProductRepository(IProductRepository):
         new_product = Product(
             code = product.code,
             name = product.name,
+            price = product.price
         )
 
         with SessionLocal() as db:
@@ -56,6 +57,7 @@ class ProductRepository(IProductRepository):
             product = db.query(Product).filter(Product.id == updates.id).first()
     
             product.name = updates.name
+            product.price = updates.price
 
             db.add(product)
             db.commit()

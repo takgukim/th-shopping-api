@@ -60,10 +60,8 @@ def create_product(
     product_body: ProductCreate,
     product_service: ProductService = Depends(Provide[Container.product_service])
 ) -> ProductCreate:
-    new_product = product_service.create_product(
-        code=product_body.code,
-        name=product_body.name,
-    )
+    
+    new_product = product_service.create_product(product_body)
 
     return new_product
 
@@ -81,7 +79,7 @@ def update_product(
     product_id : int = Path(ge = 1, description = "제품의 고유 값"),
     product_service: ProductService = Depends(Provide[Container.product_service])
 ) -> ProductResponse:
-    update_product = product_service.update_product(product_id, product_body.name)
+    update_product = product_service.update_product(product_id, product_body)
 
     return update_product
 

@@ -14,3 +14,4 @@ class Product(Base):
     id: Mapped[int] = mapped_column(INTEGER(unsigned=True), primary_key=True, autoincrement=True)
     code: Mapped[str] = mapped_column(String(8), nullable=False, index=True) 
     name: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
+    price: Mapped[int] = mapped_column(INTEGER(unsigned=True), default = 0)
