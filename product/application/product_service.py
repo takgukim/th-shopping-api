@@ -21,7 +21,6 @@ class ProductService:
     def create_product(self, code: str, name: str) -> Product:
 
         product: Product = Product(
-            id=0,
             code=code,
             name=name,
         )
