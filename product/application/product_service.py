@@ -16,25 +16,13 @@ class ProductService:
     def get_products(self, start_page: int, end_page: int) -> tuple[int, list[Product]]:
         new_start_page = (start_page - 1) * end_page
 
-        products = self.product_repo.get_users(new_start_page, end_page)
+        products = self.product_repo.get_products(new_start_page, end_page)
 
-        # 현재 제품 카운트 가져온다
-        # 추후 검색 조건 넣을 경우 검색되는거만 조회되도록 할 것 
-        product_count = self.product_repo.get_product_count()
-
-        return {
-            "product_count" : product_count,
-            "products" : products,
-        }
+        return products
     
     def get_product(self, product_id: int) -> Product: 
 
-        exist_count = self.product_repo.get_check_id(product_id)
-
-        if exist_count < 1:
-            raise HTTPException(status.HTTP_404_NOT_FOUND, detail="제품 코드를 확인해주세요") 
-
-        product = self.product_repo.get_user(product_id)
+        product = self.product_repo.get_product(product_id)
 
         return product
 
@@ -48,3 +36,22 @@ class ProductService:
         new_product = self.product_repo.save(product)
 
         return new_product
+    
+    def update_product(self, product_id: int, name: str) -> Product:
+     
+        product = self.product_repo.get_product(product_id)
+
+        if name:
+            product.name = name
+
+        self.product_repo.update(product)
+
+        return product
+    
+    def delete_product(self, product_id: int):
+
+        product = self.product_repo.get_product(product_id)
+
+        self.product_repo.delete(product_id)
+
+        return product

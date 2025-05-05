@@ -1,7 +1,7 @@
 from dependency_injector.wiring import inject, Provide
 from containers import Container
 
-from fastapi import APIRouter, Depends, Query, Path, status
+from fastapi import APIRouter, Depends, Query, Path, status, HTTPException
 
 from product.schemas.product_create import ProductCreate 
 from product.schemas.product_response import ProductResponse
@@ -9,8 +9,6 @@ from product.schemas.product_update import ProductUpdate
 from product.schemas.product_list_response import ProductListResponse
 
 from product.application.product_service import ProductService
-
-from product.domain.product import Product
 
 router = APIRouter(prefix="/products")
 
@@ -54,13 +52,14 @@ def get_product(
     response_model=ProductResponse,
     tags=["product"],
     summary="판매하고자 하는 신규 제품을 추가한다.",
-    description="중복이 되지 않은 제품의 이름과 코드를 입력한다.현재는 중복되어도 입력된다. 배포 시 개선이 필요하다."
+    description="중복이 되지 않은 제품의 이름과 코드를 입력한다.현재는 중복되어도 입력된다. 배포 시 개선이 필요하다.",
+    status_code=status.HTTP_201_CREATED
 )
 @inject
 def create_product(
     product_body: ProductCreate,
     product_service: ProductService = Depends(Provide[Container.product_service])
-) -> Product:
+) -> ProductCreate:
     new_product = product_service.create_product(
         code=product_body.code,
         name=product_body.name,
@@ -68,10 +67,37 @@ def create_product(
 
     return new_product
 
-@router.put("/{product_id}", response_model=ProductResponse, tags=["product"])
-def update_product(product_body: ProductUpdate):
-    pass
+@router.put(
+    "/{product_id}", 
+    response_model=ProductResponse, 
+    tags=["product"],
+    summary="특정 제품의 정보를 수정한다.",
+    description="현재 존재하는 제품만 수정한다.",
+    status_code=status.HTTP_201_CREATED
+)
+@inject
+def update_product(
+    product_body: ProductUpdate,
+    product_id : int = Path(ge = 1, description = "제품의 고유 값"),
+    product_service: ProductService = Depends(Provide[Container.product_service])
+) -> ProductResponse:
+    update_product = product_service.update_product(product_id, product_body.name)
 
-@router.delete("/{product_id}", tags=["product"])
-def delete_products():
-    pass
+    return update_product
+
+@router.delete(
+    "/{product_id}", 
+    response_model=ProductResponse,
+    tags=["product"],
+    summary="특정 제품의 정보를 삭제한다.",
+    description="현재 존재하는 제품만 삭제한다.",
+    status_code=status.HTTP_201_CREATED
+)
+@inject
+def delete_products(
+    product_id : int = Path(ge = 1, description = "제품의 고유 값"),
+    product_service: ProductService = Depends(Provide[Container.product_service])
+):
+    delete_product = product_service.delete_product(product_id)
+
+    return delete_product
