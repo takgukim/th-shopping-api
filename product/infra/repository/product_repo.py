@@ -95,6 +95,9 @@ class ProductRepository(IProductRepository):
         with SessionLocal() as db:
             product = db.query(Product).filter(Product.id == product_id).first()
 
+            if product.use_flag == 1:
+                raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail="사용 중인 제품은 삭제 할 수 없습니다.") 
+
             db.delete(product)
             db.commit()
 
