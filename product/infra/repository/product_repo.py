@@ -11,9 +11,6 @@ from product.domain.repository.product_repo import IProductRepository
 from product.domain.product import Product as ProductVO
 from product.infra.db_models.product import Product
 
-from product.schemas.product_create import ProductCreate
-from product.schemas.product_update import ProductUpdate
-
 class ProductRepository(IProductRepository):
 
     def get_products(self, start_page: int, end_page: int) -> tuple[int, list[ProductVO]]:
@@ -59,7 +56,7 @@ class ProductRepository(IProductRepository):
 
         return new_product
     
-    def update(self, updates: ProductUpdate) -> ProductVO:
+    def update(self, updates: ProductVO) -> ProductVO:
 
         with SessionLocal() as db:
             product = db.query(Product).filter(Product.id == updates.id).first()
