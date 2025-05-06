@@ -21,7 +21,15 @@ class IProductRepository(metaclass=ABCMeta):
     @abstractmethod
     def update(self, product: Product) -> Product:
         raise NotImplementedError
+
+    @abstractmethod
+    def update_usg_flag(self, product_id: int, updates: Product) -> Product:
+        raise NotImplementedError
     
     @abstractmethod
-    def delete(self, id: int) -> Product:
+    def delete(self, product_id: int) -> Product:
+        raise NotImplementedError
+    
+    @abstractmethod
+    def soft_delete(self, product_id: int, deletes: Product) -> Product:
         raise NotImplementedError

@@ -7,6 +7,8 @@ from product.schemas.product_create import ProductCreate
 from product.schemas.product_response import ProductResponse
 from product.schemas.product_update import ProductUpdate
 from product.schemas.product_list_response import ProductListResponse
+from product.schemas.product_update_activate import ProductUpdateActivate
+from product.schemas.product_soft_delete import ProductSoftDelete
 
 from product.application.product_service import ProductService
 
@@ -83,11 +85,29 @@ def update_product(
 
     return update_product
 
+@router.patch(
+    "/{product_id}/activate", 
+    response_model=ProductResponse,
+    tags=["product"],
+    summary="특정 제품의 판매 및 사용 여부를 변경한다.",
+    description="삭제 되지 않는 제품 수정 가능하다",
+    status_code=status.HTTP_201_CREATED
+)
+@inject
+def update_product_use_flag(
+    activate_body : ProductUpdateActivate,
+    product_id : int = Path(ge = 1, description = "제품의 고유 값"),
+    product_service: ProductService = Depends(Provide[Container.product_service])
+) -> ProductResponse:
+    update_product = product_service.update_product_use_flag(product_id, activate_body)
+
+    return update_product
+
 @router.delete(
     "/{product_id}", 
     response_model=ProductResponse,
     tags=["product"],
-    summary="특정 제품의 정보를 삭제한다.",
+    summary="특정 제품의 정보를 테이블에서 삭제한다.",
     description="현재 존재하는 제품만 삭제한다.",
     status_code=status.HTTP_201_CREATED
 )
@@ -95,7 +115,26 @@ def update_product(
 def delete_products(
     product_id : int = Path(ge = 1, description = "제품의 고유 값"),
     product_service: ProductService = Depends(Provide[Container.product_service])
-):
+) -> ProductResponse:
     delete_product = product_service.delete_product(product_id)
+
+    return delete_product
+
+@router.post(
+    "/{product_id}/soft-delete", 
+    response_model=ProductResponse,
+    tags=["product"],
+    summary="특정 제품의 정보를 완전 삭제 하지 않는다.",
+    description="현재 존재하는 제품만 삭제한다.",
+    status_code=status.HTTP_201_CREATED
+)
+@inject
+def soft_delete_products(
+    soft_delete_body: ProductSoftDelete,
+    product_id : int = Path(ge = 1, description = "제품의 고유 값"),
+    product_service: ProductService = Depends(Provide[Container.product_service])
+) -> ProductResponse:
+    
+    delete_product = product_service.soft_delete_product(product_id, soft_delete_body)
 
     return delete_product

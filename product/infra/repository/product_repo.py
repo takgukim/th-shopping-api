@@ -15,7 +15,9 @@ class ProductRepository(IProductRepository):
 
     def get_products(self, start_page: int, end_page: int) -> tuple[int, list[ProductVO]]:
         with SessionLocal() as db:
-            query = db.query(Product)
+            query = db.query(Product)\
+                .filter_by(deleted_datetime = None)
+            
             total = query.count()
 
             # 페이징
@@ -28,7 +30,10 @@ class ProductRepository(IProductRepository):
     
     def get_product(self, product_id: int) -> ProductVO:
         with SessionLocal() as db:
-            product = db.query(Product).filter(Product.id == product_id).first()
+            product = db.query(Product)\
+                .filter_by(deleted_datetime = None)\
+                .filter(Product.id == product_id)\
+                .first()
 
             if not product:
                 raise HTTPException(status.HTTP_404_NOT_FOUND, detail="제품 정보를 찾을 수 없습니다") 
@@ -71,11 +76,41 @@ class ProductRepository(IProductRepository):
 
         return product
     
-    def delete(self, id: int) -> ProductVO:
+    def update_usg_flag(self, product_id: int, updates: ProductVO) -> Product:
+
         with SessionLocal() as db:
-            product = db.query(Product).filter(Product.id == id).first()
+            product = db.query(Product).filter(Product.id == product_id).first()
+    
+            product.use_flag = updates.use_flag
+            product.updated_user = updates.updated_user
+            product.updated_datetime = datetime.now().replace(microsecond=0)
+            
+            db.add(product)
+            db.commit()
+            db.refresh(product)
+
+        return product
+    
+    def delete(self, product_id: int) -> ProductVO:
+        with SessionLocal() as db:
+            product = db.query(Product).filter(Product.id == product_id).first()
 
             db.delete(product)
+            db.commit()
+
+        return product
+    
+    def soft_delete(self, product_id: int, deletes: ProductVO) -> Product:
+        with SessionLocal() as db:
+            product = db.query(Product).filter(Product.id == product_id).first()
+
+            if product.use_flag == 1:
+                raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail="사용 중인 제품은 삭제 할 수 없습니다.") 
+    
+            product.deleted_user = deletes.deleted_user
+            product.deleted_datetime = datetime.now().replace(microsecond=0)
+            
+            db.add(product)
             db.commit()
 
         return product

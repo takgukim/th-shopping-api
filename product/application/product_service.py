@@ -7,6 +7,9 @@ from product.domain.repository.product_repo import IProductRepository
 
 from product.schemas.product_create import ProductCreate
 from product.schemas.product_update import ProductUpdate
+from product.schemas.product_update_activate import ProductUpdateActivate
+from product.schemas.product_soft_delete import ProductSoftDelete
+
 
 class ProductService:
     @inject
@@ -58,11 +61,27 @@ class ProductService:
         self.product_repo.update(product)
 
         return product
-    
+
+    def update_product_use_flag(self, product_id: int, activate_body : ProductUpdateActivate) -> Product:
+
+        self.product_repo.get_product(product_id)
+
+        new_product = self.product_repo.update_usg_flag(product_id, activate_body)
+
+        return new_product
+
     def delete_product(self, product_id: int):
 
-        product = self.product_repo.get_product(product_id)
+        old_product = self.product_repo.get_product(product_id)
 
         self.product_repo.delete(product_id)
 
-        return product
+        return old_product
+    
+    def soft_delete_product(self, product_id: int, soft_delete_body: ProductSoftDelete) -> Product:
+
+        old_product = self.product_repo.get_product(product_id)
+
+        self.product_repo.soft_delete(product_id, soft_delete_body)
+
+        return old_product
