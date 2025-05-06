@@ -65,7 +65,7 @@ class ProductRepository(IProductRepository):
             product.price = updates.price
             product.updated_user = updates.updated_user
             product.updated_datetime = datetime.now().replace(microsecond=0)
-
+            
             db.add(product)
             db.commit()
 
