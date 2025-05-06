@@ -17,5 +17,5 @@ class Product:
     price: int = field(default=0)
     usg_flag: int = field(default=0)
     created_user: str = field(default="system")
-    created_datetime: datetime =field(default="")
+    created_datetime: datetime =field(default_factory=datetime.now)
     
