@@ -34,7 +34,8 @@ class ProductService:
         product: Product = Product(
             code=product_create.code,
             name=product_create.name,
-            price=product_create.price
+            price=product_create.price,
+            created_user=product_create.created_user
         )
 
         new_product = self.product_repo.save(product)
@@ -51,6 +52,9 @@ class ProductService:
         if product_update.price:
             product.price = product_update.price
 
+        if product_update.updated_user:
+            product.updated_user = product_update.updated_user
+            
         self.product_repo.update(product)
 
         return product

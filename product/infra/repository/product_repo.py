@@ -1,6 +1,8 @@
 from fastapi import HTTPException, status
 from utils.db_utils import row_to_dict
 
+from datetime import datetime
+
 from database import SessionLocal, engine
 
 from sqlalchemy import text
@@ -8,6 +10,9 @@ from sqlalchemy import text
 from product.domain.repository.product_repo import IProductRepository
 from product.domain.product import Product as ProductVO
 from product.infra.db_models.product import Product
+
+from product.schemas.product_create import ProductCreate
+from product.schemas.product_update import ProductUpdate
 
 class ProductRepository(IProductRepository):
 
@@ -38,7 +43,9 @@ class ProductRepository(IProductRepository):
         new_product = Product(
             code = product.code,
             name = product.name,
-            price = product.price
+            price = product.price,
+            created_user = product.created_user,
+            created_datetime = datetime.now().replace(microsecond=0)
         )
 
         with SessionLocal() as db:
@@ -52,12 +59,15 @@ class ProductRepository(IProductRepository):
 
         return new_product
     
-    def update(self, updates: ProductVO) -> ProductVO:
+    def update(self, updates: ProductUpdate) -> ProductVO:
+
         with SessionLocal() as db:
             product = db.query(Product).filter(Product.id == updates.id).first()
     
             product.name = updates.name
             product.price = updates.price
+            product.updated_user = updates.updated_user
+            product.updated_datetime = datetime.now().replace(microsecond=0)
 
             db.add(product)
             db.commit()
