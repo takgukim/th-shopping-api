@@ -1,6 +1,5 @@
 .dockervenv
 .venv
 alembic.ini
-migrations
 __pycache__/
 .DS_Store
