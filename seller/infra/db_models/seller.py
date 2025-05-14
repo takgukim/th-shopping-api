@@ -14,22 +14,25 @@ from datetime import datetime
 from sqlalchemy.orm import Mapped, mapped_column
 from database import Base
 
-class Product(Base):
+class Seller(Base):
 
-    __tablename__ = "th_products"
+    __tablename__ = "th_sellers"
 
-    __table_args__ = {"comment": "제품 기본정보 테이블"}
+    __table_args__ = {"comment": "판매자 정보 테이블"}
 
     id: Mapped[int] = mapped_column(
         INTEGER(unsigned=True), 
         primary_key=True,
         autoincrement=True, 
-        comment="제품 테이블 Primary Key"
+        comment="판매자 테이블 Primary Key"
     )
-    code: Mapped[str] = mapped_column(String(8), nullable=False, index=True, comment="제품 고유 코드") 
-    name: Mapped[str] = mapped_column(String(100), nullable=False, index=True, comment="제품명")
-    price: Mapped[int] = mapped_column(INTEGER(unsigned=True), default = 0, comment="제품 가격")
-    use_flag: Mapped[int] = mapped_column(TINYINT(1, unsigned=True), default=0, nullable=False, comment="현재 판매 또는 사용중인 제품")
+    business_code: Mapped[str] = mapped_column(String(10), nullable=False, index=True, comment="사업자등록번호") 
+    owner_name: Mapped[str] = mapped_column(String(50), nullable=False, index=True, comment="대표자명")
+    compony_name: Mapped[str] = mapped_column(String(80), nullable=False, index=True, comment="업체명")
+    adress: Mapped[int] = mapped_column(String(140), nullable=True, comment="업체주소")
+    tel: Mapped[str] = mapped_column(String(15), nullable=True, comment="전화번호")
+    phone: Mapped[str] = mapped_column(String(15), nullable=True, comment="개인전화")
+    view_flag: Mapped[int] = mapped_column(TINYINT(1, unsigned=True), default=0, nullable=False, comment="노출여부")
     created_user: Mapped[str] = mapped_column(
         String(50), 
         nullable=False,

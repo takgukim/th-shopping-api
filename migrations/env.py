@@ -7,6 +7,7 @@ from alembic import context
 
 import database
 import product.infra.db_models.product
+import seller.infra.db_models.seller
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
